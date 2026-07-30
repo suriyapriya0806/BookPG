@@ -4,21 +4,54 @@ const ApiError = require("../utils/apiError");
 const catchAsync = require("../utils/catchAsync");
 const { emitBedAvailability } = require("../services/socket.service");
 
-const allowedStatuses = ["AVAILABLE", "OCCUPIED", "RESERVED", "MAINTENANCE"];
+const allowedStatuses = ["AVAILABLE", "OCCUPIED", "BLOCKED", "MAINTENANCE"];
 const statusAliases = {
   Available: "AVAILABLE",
   Occupied: "OCCUPIED",
-  Reserved: "RESERVED",
+  Blocked: "BLOCKED",
   Maintenance: "MAINTENANCE",
-  HELD: "RESERVED",
-  BOOKED: "RESERVED"
+  HELD: "BLOCKED",
+  BOOKED: "BLOCKED",
+  RESERVED: "BLOCKED"
 };
 
 const normalizeStatus = (status) => statusAliases[status] || String(status || "").toUpperCase();
 
+const lazyExpire = async (bed) => {
+  if (bed.status === "BLOCKED" && bed.blockedUntil && new Date() > bed.blockedUntil) {
+    bed.status = "AVAILABLE";
+    bed.blockedUntil = undefined;
+    await bed.save();
+    emitBedAvailability(bed);
+  }
+  return bed;
+};
+
 const crud = createCrudController(Bed, {
   populate: "branch room currentResident",
   filterFields: ["branch", "room", "status"]
+});
+
+const list = catchAsync(async (req, res) => {
+  const filter = {};
+  if (req.query.branch) filter.branch = req.query.branch;
+  if (req.query.room) filter.room = req.query.room;
+  if (req.query.status) filter.status = req.query.status;
+
+  let data = await Bed.find(filter).populate("branch room currentResident").sort({ createdAt: -1 });
+
+  for (let i = 0; i < data.length; i++) {
+    data[i] = await lazyExpire(data[i]);
+  }
+
+  res.json({ success: true, data });
+});
+
+const get = catchAsync(async (req, res) => {
+  let bed = await Bed.findById(req.params.id).populate("branch room currentResident");
+  if (!bed) throw new ApiError(404, "Bed not found.");
+  bed = await lazyExpire(bed);
+  res.json({ success: true, data: bed });
 });
 
 const create = catchAsync(async (req, res) => {
@@ -65,4 +98,4 @@ const update = catchAsync(async (req, res) => {
   res.json({ success: true, data: bed });
 });
 
-module.exports = { ...crud, create, update };
+module.exports = { list, get, create, update, ...crud };

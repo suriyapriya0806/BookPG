@@ -27,7 +27,6 @@ const wardenLinks = [
 const userLinks = [
   ["Dashboard", "/pgbooking/user/dashboard", Home],
   ["My Booking", "/pgbooking/user/booking", BedDouble],
-  ["Payments", "/pgbooking/user/payment", CreditCard],
   ["Visits", "/pgbooking/user/visits", CalendarCheck]
 ];
 

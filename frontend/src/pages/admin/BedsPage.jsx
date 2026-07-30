@@ -43,7 +43,7 @@ const Field = ({ label, required, error, children }) => (
 const statusStyles = {
   Available: "bg-emerald-50 text-emerald-700",
   Occupied: "bg-red-50 text-red-700",
-  Reserved: "bg-orange-50 text-orange-700",
+  Blocked: "bg-orange-50 text-orange-700",
   Maintenance: "bg-slate-100 text-slate-600"
 };
 
@@ -297,7 +297,7 @@ const BedsPage = () => {
     totalBeds: beds.length,
     availableBeds: beds.filter((bed) => bed.status === "Available").length,
     occupiedBeds: beds.filter((bed) => bed.status === "Occupied").length,
-    reservedBeds: beds.filter((bed) => bed.status === "Reserved").length,
+    blockedBeds: beds.filter((bed) => bed.status === "Blocked").length,
     maintenanceBeds: beds.filter((bed) => bed.status === "Maintenance").length
   }), [beds]);
 
@@ -365,7 +365,7 @@ const BedsPage = () => {
         <StatCard label="Total Beds" value={stats.totalBeds} />
         <StatCard label="Available Beds" value={stats.availableBeds} />
         <StatCard label="Occupied Beds" value={stats.occupiedBeds} />
-        <StatCard label="Reserved Beds" value={stats.reservedBeds} />
+        <StatCard label="Blocked Beds" value={stats.blockedBeds} />
         <StatCard label="Maintenance Beds" value={stats.maintenanceBeds} />
       </div>
 
@@ -383,7 +383,7 @@ const BedsPage = () => {
             {roomFilterOptions.map((room) => <option key={room.id} value={room.id}>Room {room.roomNumber}</option>)}
           </select>
           <select aria-label="Sharing" className={fieldClass} value={filters.sharingType} onChange={(event) => updateFilter("sharingType", event.target.value)}>
-            {["All", "1 Sharing", "2 Sharing", "3 Sharing", "4 Sharing"].map((option) => <option key={option} value={option}>{option}</option>)}
+            {["All", "2 Sharing", "3 Sharing", "4 Sharing"].map((option) => <option key={option} value={option}>{option}</option>)}
           </select>
           <select aria-label="Status" className={fieldClass} value={filters.status} onChange={(event) => updateFilter("status", event.target.value)}>
             {["All", ...BED_STATUSES].map((option) => <option key={option} value={option}>{option}</option>)}

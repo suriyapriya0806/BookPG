@@ -11,7 +11,8 @@ const branchSchema = new mongoose.Schema(
     amenities: [{ type: String }],
     images: [{ type: String }],
     warden: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    isActive: { type: Boolean, default: true }
+    isActive: { type: Boolean, default: true },
+    blockExpiryHours: { type: Number, default: 24 }
   },
   { timestamps: true }
 );

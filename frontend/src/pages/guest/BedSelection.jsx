@@ -161,8 +161,7 @@ const BedSelection = () => {
               ["AC / Non AC", room.roomType],
               ["Selected Bed", selectedBed?.label || "Select an available bed"],
               ["Monthly Rent", formatCurrency(room.monthlyRent)],
-              ["Security Deposit", formatCurrency(room.securityDeposit)],
-              ["Booking Amount", formatCurrency(room.bookingAmount)]
+              ["Security Deposit", formatCurrency(room.securityDeposit)]
             ].map(([label, value]) => (
               <div key={label} className="flex items-start justify-between gap-4 border-b border-line pb-3 last:border-0 last:pb-0">
                 <span className="font-semibold text-secondary">{label}</span>
@@ -173,14 +172,14 @@ const BedSelection = () => {
 
           {selectedBed ? (
             <Link
-              to={`/booking-details?roomId=${room.id}&bedId=${selectedBed.id}`}
-              state={{ roomId: room.id, bedId: selectedBed.id, selectedBed }}
+              to="/booking"
+              state={{ roomId: room.id, branchId: branch.id, selectedBed }}
               className="mt-7 block"
             >
-              <Button className="w-full">Continue Booking</Button>
+              <Button className="w-full">Continue to Block Request</Button>
             </Link>
           ) : (
-            <Button className="mt-7 w-full" disabled>Continue Booking</Button>
+            <Button className="mt-7 w-full" disabled>Continue to Block Request</Button>
           )}
           <Link to={`/branches/${branch.id}/rooms`} className="mt-3 block">
             <Button variant="secondary" className="w-full">Back to Rooms</Button>

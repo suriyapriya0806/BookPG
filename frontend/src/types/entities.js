@@ -7,11 +7,11 @@
  */
 
 /**
- * @typedef {"available" | "held" | "booked" | "occupied" | "maintenance"} BedStatus
+ * @typedef {"available" | "blocked" | "booked" | "occupied" | "maintenance"} BedStatus
  */
 
 /**
- * @typedef {"pending" | "approved" | "rejected" | "checked_in"} BookingStatus
+ * @typedef {"blocked" | "confirmed" | "rejected" | "cancelled" | "checked_in" | "expired"} BookingStatus
  */
 
 /**
@@ -50,7 +50,6 @@
  * @property {number} sharing_type
  * @property {number} monthly_rent
  * @property {number} deposit_amount
- * @property {number} token_amount
  * @property {string[]} amenities
  * @property {string[]} images
  * @property {boolean} is_active
@@ -100,8 +99,8 @@
  * @property {BookingStatus} status
  * @property {number} monthly_rent
  * @property {number} deposit_amount
- * @property {number} token_amount
  * @property {string[]} document_filenames
+ * @property {string} blocked_until
  * @property {string} created_at
  * @property {string} updated_at
  */

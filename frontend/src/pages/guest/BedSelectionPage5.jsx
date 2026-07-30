@@ -33,7 +33,6 @@ const room = {
   deposit: 37000,
   availableBeds: 2,
   moveInDate: "20 Jul 2026",
-  token: 2500,
   gst: 450,
   images: [
     "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=500&q=80",
@@ -66,7 +65,7 @@ const beds = [
   },
   {
     id: "B2",
-    status: "reserved",
+    status: "blocked",
     position: "Bottom",
     features: ["Corner Bed"],
     area: "walkway"
@@ -90,8 +89,8 @@ const statusStyles = {
     text: "text-danger",
     icon: X
   },
-  reserved: {
-    label: "Reserved",
+  blocked: {
+    label: "Blocked",
     dot: "bg-warning",
     border: "border-warning/40",
     background: "bg-warning/10",
@@ -206,7 +205,7 @@ const Legend = () => (
   <Card className="hover:translate-y-0">
     <div className="flex flex-wrap items-center gap-3">
       <p className="mr-2 text-sm font-semibold text-ink">Legend</p>
-      {["available", "booked", "reserved", "selected"].map((status) => (
+      {["available", "booked", "blocked", "selected"].map((status) => (
         <StatusBadge key={status} status={status} />
       ))}
     </div>
@@ -325,11 +324,10 @@ const SelectedBedPanel = ({ selectedBed }) => (
 );
 
 const BookingSummary = ({ selectedBed }) => {
-  const total = room.rent + room.deposit + room.token + room.gst;
+  const total = room.rent + room.deposit + room.gst;
   const items = [
     ["Room Rent", formatCurrency(room.rent)],
     ["Deposit", formatCurrency(room.deposit)],
-    ["Booking Token", formatCurrency(room.token)],
     ["GST", formatCurrency(room.gst)],
     ["Total Amount", formatCurrency(total)]
   ];
@@ -358,8 +356,7 @@ const StickySidebar = ({ selectedBed }) => (
       <div className="mt-5 space-y-3 text-sm">
         {[
           ["Monthly Rent", formatCurrency(room.rent)],
-          ["Deposit", formatCurrency(room.deposit)],
-          ["Booking Token", formatCurrency(room.token)]
+          ["Deposit", formatCurrency(room.deposit)]
         ].map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4 border-b border-line pb-3">
             <span className="text-secondary">{label}</span>
@@ -382,7 +379,7 @@ const EmptyState = () => (
     </div>
     <h2 className="mt-6 text-2xl font-semibold text-ink">No Beds Available</h2>
     <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-secondary">
-      This room is fully occupied or reserved. Browse similar rooms with open beds.
+      This room is fully occupied or blocked. Browse similar rooms with open beds.
     </p>
     <Button className="mt-6">View Other Rooms</Button>
   </Card>

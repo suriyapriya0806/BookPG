@@ -18,12 +18,13 @@ const wardenBranchByUser = {
 };
 
 const fieldBadge = {
-  Pending: "bg-amber-50 text-amber-700",
-  Approved: "bg-emerald-50 text-emerald-700",
+  Blocked: "bg-blue-50 text-blue-700",
+  Confirmed: "bg-emerald-50 text-emerald-700",
   "Assigned to Warden": "bg-purple-50 text-purple-700",
   "Checked In": "bg-blue-50 text-blue-700",
   Rejected: "bg-red-50 text-red-700",
-  Cancelled: "bg-slate-100 text-slate-700"
+  Cancelled: "bg-slate-100 text-slate-700",
+  Expired: "bg-slate-100 text-slate-600"
 };
 
 const formatDate = (value) => {
@@ -74,7 +75,7 @@ const WardenDashboard = () => {
   const activeResidents = branchResidents.filter((resident) => resident.status === "Active");
   const occupiedBeds = branchBeds.filter((bed) => bed.status === "Occupied");
   const availableBeds = branchBeds.filter((bed) => bed.status === "Available");
-  const pendingCheckIns = branchBookings.filter((booking) => ["Approved", "Assigned to Warden"].includes(booking.bookingStatus));
+  const pendingCheckIns = branchBookings.filter((booking) => ["Confirmed", "Assigned to Warden"].includes(booking.bookingStatus));
   const todaysCheckOuts = branchResidents.filter((resident) => resident.expectedVacateDate === today || resident.status === "Vacating");
   const pendingComplaints = branchComplaints.filter((complaint) => !["Resolved", "Closed"].includes(complaint.status));
   const todaysRentCollection = branchPayments

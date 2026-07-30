@@ -27,7 +27,6 @@ const booking = {
   sharing: "4 Sharing",
   rent: "18,500",
   deposit: "37,000",
-  token: "2,500",
   moveInDate: "20 Jul 2026",
   availableBeds: "2 beds",
   monthlyCost: "19,700"
@@ -176,7 +175,6 @@ const BookingSummary = () => (
           ["Sharing Type", booking.sharing],
           ["Monthly Rent", `₹${booking.rent}`],
           ["Security Deposit", `₹${booking.deposit}`],
-          ["Booking Token", `₹${booking.token}`],
           ["Move-in Date", booking.moveInDate],
           ["Available Beds", booking.availableBeds],
           ["Estimated Monthly Cost", `₹${booking.monthlyCost}`]
@@ -250,7 +248,7 @@ const BookingFormPage7 = () => (
         <p className="text-xs font-bold uppercase tracking-[0.32em] text-gold">Booking Form</p>
         <h1 className="mt-3 text-4xl font-semibold leading-tight text-ink">Complete Your Booking</h1>
         <p className="mt-3 max-w-2xl text-lg leading-8 text-secondary">
-          Enter your details to reserve your selected bed.
+          Enter your details to block your selected bed.
         </p>
       </section>
 

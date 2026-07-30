@@ -52,14 +52,14 @@ export const bedStatusStyles = {
 };
 
 export const bookingStatusStyles = {
-  pending: {
-    label: "Pending",
-    background: "bg-amber-50",
-    text: "text-amber-800",
-    color: colors.marigold
+  blocked: {
+    label: "Blocked",
+    background: "bg-blue-50",
+    text: "text-blue-800",
+    color: colors.indigo
   },
-  approved: {
-    label: "Approved",
+  confirmed: {
+    label: "Confirmed",
     background: "bg-emerald-50",
     text: "text-emerald-800",
     color: colors.moss
@@ -75,5 +75,11 @@ export const bookingStatusStyles = {
     background: "bg-sky-50",
     text: "text-sky-800",
     color: colors.indigo
+  },
+  expired: {
+    label: "Expired",
+    background: "bg-slate-100",
+    text: "text-slate-600",
+    color: colors.stone
   }
 };

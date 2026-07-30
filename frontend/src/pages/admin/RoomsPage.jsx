@@ -299,7 +299,7 @@ const RoomModal = ({ room, rooms, branches, roomAmenities, onRoomAmenitiesChange
           </Field>
           <Field label="Sharing Type" required>
             <select className={fieldClass} value={form.sharingType} onChange={(event) => update("sharingType", event.target.value)}>
-              {["1 Sharing", "2 Sharing", "3 Sharing", "4 Sharing"].map((item) => <option key={item} value={item}>{item}</option>)}
+              {["2 Sharing", "3 Sharing", "4 Sharing"].map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </Field>
           <Field label="Monthly Rent" required error={errors.monthlyRent}>
@@ -503,7 +503,7 @@ const RoomsPage = () => {
           </label>
           {[
             ["Branch", "branch", ["All", ...AREAS]],
-            ["Sharing Type", "sharingType", ["All", "1 Sharing", "2 Sharing", "3 Sharing", "4 Sharing"]],
+            ["Sharing Type", "sharingType", ["All", "2 Sharing", "3 Sharing", "4 Sharing"]],
             ["Room Type", "roomType", ["All", "AC", "Non AC"]],
             ["Status", "status", ["All", "Available", "Occupied", "Maintenance"]]
           ].map(([label, field, options]) => (
@@ -519,7 +519,7 @@ const RoomsPage = () => {
         <table className="w-full min-w-[1120px] text-left text-sm">
           <thead className="border-b border-line bg-slate-50 text-slate-500">
             <tr>
-              {["Room Number", "Branch", "Floor", "Sharing Type", "Room Type", "Monthly Rent", "Total Beds", "Available Beds", "Occupied Beds", "Reserved Beds", "Maintenance Beds", "Overall Availability", "Actions"].map((heading) => (
+              {["Room Number", "Branch", "Floor", "Sharing Type", "Room Type", "Monthly Rent", "Total Beds", "Available Beds", "Occupied Beds", "Blocked Beds", "Maintenance Beds", "Overall Availability", "Actions"].map((heading) => (
                 <th key={heading} className="px-4 py-3 font-semibold">{heading}</th>
               ))}
             </tr>
@@ -536,7 +536,7 @@ const RoomsPage = () => {
                 <td className="px-4 py-3 font-semibold">{room.totalBeds}</td>
                 <td className="px-4 py-3 font-semibold text-success">{room.availableBeds}</td>
                 <td className="px-4 py-3 font-semibold">{room.occupiedBeds}</td>
-                <td className="px-4 py-3 font-semibold">{room.reservedBeds}</td>
+                <td className="px-4 py-3 font-semibold">{room.blockedBeds}</td>
                 <td className="px-4 py-3 font-semibold">{room.maintenanceBeds}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-3 py-1 text-xs font-bold ${room.overallAvailability === "Available" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{room.overallAvailability}</span>

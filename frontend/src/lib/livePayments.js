@@ -7,8 +7,6 @@ import {
   savePayments
 } from "../data/adminPayments";
 import { loadResidents, saveResidents } from "../data/adminResidents";
-import api from "../services/api";
-import { getSocket } from "../services/socket";
 
 export const today = "2026-07-18";
 export const currentMonth = "2026-07";
@@ -127,14 +125,6 @@ export const savePaymentRecord = async (payment, options = {}) => {
   });
   saveResidents(nextResidents);
 
-  if (options.persistToApi && /^[a-f\d]{24}$/i.test(String(nextPayment.bookingId))) {
-    try {
-      await api.post("/payments", nextPayment);
-    } catch {
-      // Local persistence remains the source for the current mock UI.
-    }
-  }
-
   return { payment: nextPayment, payments: nextPayments, residents: nextResidents };
 };
 
@@ -212,19 +202,14 @@ export const useLivePayments = () => {
   useEffect(() => {
     const refreshPayments = () => setPayments(loadPayments());
     const refreshNotifications = () => setNotifications(loadPaymentNotifications());
-    const socket = getSocket();
-    const onPaymentUpdated = () => refreshPayments();
-
     window.addEventListener("pg:payments-updated", refreshPayments);
     window.addEventListener("pg:payment-notifications-updated", refreshNotifications);
     window.addEventListener("storage", refreshPayments);
-    socket.on("payment:updated", onPaymentUpdated);
 
     return () => {
       window.removeEventListener("pg:payments-updated", refreshPayments);
       window.removeEventListener("pg:payment-notifications-updated", refreshNotifications);
       window.removeEventListener("storage", refreshPayments);
-      socket.off("payment:updated", onPaymentUpdated);
     };
   }, []);
 

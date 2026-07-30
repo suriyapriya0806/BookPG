@@ -14,7 +14,7 @@ import { saveAvailabilitySnapshot, useLiveAvailability } from "../../lib/liveAva
 
 const today = "2026-07-18";
 const rowsPerPage = 8;
-const sharingTypes = ["1 Sharing", "2 Sharing", "3 Sharing", "4 Sharing"];
+const sharingTypes = ["2 Sharing", "3 Sharing", "4 Sharing"];
 const fieldClass = "min-h-12 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/15";
 
 const wardenBranchByUser = {
@@ -29,14 +29,15 @@ const statusStyles = {
 };
 
 const bookingStatusStyles = {
-  Pending: "bg-amber-50 text-amber-700",
-  Approved: "bg-emerald-50 text-emerald-700",
+  Blocked: "bg-amber-50 text-amber-700",
+  Confirmed: "bg-emerald-50 text-emerald-700",
   "Assigned to Warden": "bg-purple-50 text-purple-700",
   "Checked-In": "bg-blue-50 text-blue-700",
   "Checked In": "bg-blue-50 text-blue-700",
   Completed: "bg-slate-100 text-slate-600",
   Rejected: "bg-red-50 text-red-700",
-  Cancelled: "bg-slate-100 text-slate-600"
+  Cancelled: "bg-slate-100 text-slate-600",
+  Expired: "bg-slate-100 text-slate-600"
 };
 
 const formatCurrency = (value) => `₹${Number(value || 0).toLocaleString("en-IN")}`;
@@ -101,7 +102,7 @@ const syncBedsWithResidents = (beds, residents) =>
 
     return {
       ...bed,
-      status: resident.status === "Pending Check-In" ? "Reserved" : "Occupied",
+      status: resident.status === "Pending Check-In" ? "Blocked" : "Occupied",
       currentResident: resident.status === "Pending Check-In" ? "" : resident.fullName,
       bookingId: resident.bookingId,
       checkInDate: resident.moveInDate,
@@ -371,10 +372,10 @@ const WardenResidentsPage = () => {
 
     const booking = bookingFor(resident);
     const bed = bedFor(resident);
-    const isAllowed = booking?.bookingStatus === "Approved" && bed?.status === "Reserved";
+    const isAllowed = booking?.bookingStatus === "Confirmed" && bed?.status === "Blocked";
 
     if (!isAllowed) {
-      setNotice("Check-in is allowed only when booking status is Approved and bed status is Reserved.");
+      setNotice("Check-in is allowed only when booking status is Confirmed and bed status is Blocked.");
       return;
     }
 
@@ -475,7 +476,7 @@ const WardenResidentsPage = () => {
             {visibleResidents.map((resident) => {
               const booking = bookingFor(resident);
               const bed = bedFor(resident);
-              const canCheckIn = booking?.bookingStatus === "Approved" && bed?.status === "Reserved";
+              const canCheckIn = booking?.bookingStatus === "Confirmed" && bed?.status === "Blocked";
               const canCheckOut = ["Active", "Vacating"].includes(resident.status);
 
               return (

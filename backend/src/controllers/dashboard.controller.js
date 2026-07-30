@@ -12,7 +12,7 @@ const summary = catchAsync(async (req, res) => {
     Bed.countDocuments(branchFilter),
     Bed.countDocuments({ ...branchFilter, status: "OCCUPIED" }),
     Resident.countDocuments({ ...branchFilter, status: "ACTIVE" }),
-    Booking.countDocuments({ ...branchFilter, status: "PENDING_APPROVAL" }),
+    Booking.countDocuments({ ...branchFilter, status: "BLOCKED" }),
     Payment.aggregate([
       { $match: { ...branchFilter, status: { $in: ["PAID", "PARTIAL"] } } },
       { $group: { _id: null, total: { $sum: "$amount" } } }

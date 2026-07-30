@@ -27,7 +27,7 @@ import Card from "../../components/ui/Card";
 import { bookingBranches, bookingRooms, formatCurrency } from "../../data/bookingFlow";
 import { adminBranchIdFromPublicBranchId, useLiveAvailability } from "../../lib/liveAvailability";
 
-const sharingTypes = ["1 Sharing", "2 Sharing", "3 Sharing", "4 Sharing"];
+const sharingTypes = ["2 Sharing", "3 Sharing", "4 Sharing"];
 const roomTypes = ["AC", "Non AC"];
 const galleryFallbacks = [
   "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80",

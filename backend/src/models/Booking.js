@@ -9,14 +9,14 @@ const bookingSchema = new mongoose.Schema(
     moveInDate: { type: Date, required: true },
     status: {
       type: String,
-      enum: ["PENDING_PAYMENT", "PENDING_APPROVAL", "APPROVED", "REJECTED", "CANCELLED"],
-      default: "PENDING_PAYMENT"
+      enum: ["BLOCKED", "CONFIRMED", "REJECTED", "CANCELLED", "CHECKED_IN", "EXPIRED"],
+      default: "BLOCKED"
     },
-    tokenAmount: { type: Number, required: true },
     notes: { type: String },
-    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    approvedAt: { type: Date },
-    rejectionReason: { type: String }
+    confirmedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    confirmedAt: { type: Date },
+    rejectionReason: { type: String },
+    blockedUntil: { type: Date }
   },
   { timestamps: true }
 );

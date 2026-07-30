@@ -20,8 +20,8 @@ export const sampleBranches = [
 ];
 
 export const sampleRooms = [
-  { _id: "sample-room-1", branch: "sample-branch-1", name: "Aster 201", floor: "2", sharingType: 4, monthlyRent: 9500, tokenAmount: 2000 },
-  { _id: "sample-room-2", branch: "sample-branch-1", name: "Maple 105", floor: "1", sharingType: 3, monthlyRent: 11000, tokenAmount: 2500 }
+  { _id: "sample-room-1", branch: "sample-branch-1", name: "Aster 201", floor: "2", sharingType: 4, monthlyRent: 9500 },
+  { _id: "sample-room-2", branch: "sample-branch-1", name: "Maple 105", floor: "1", sharingType: 3, monthlyRent: 11000 }
 ];
 
 export const sampleBeds = [

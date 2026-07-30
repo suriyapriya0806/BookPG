@@ -89,12 +89,6 @@ const markPaid = catchAsync(async (req, res) => {
   await payment.save();
   emitPaymentUpdate(payment);
 
-  const booking = await Booking.findById(payment.booking);
-  if (booking && booking.status === "PENDING_PAYMENT") {
-    booking.status = "PENDING_APPROVAL";
-    await booking.save();
-  }
-
   res.json({ success: true, data: payment });
 });
 

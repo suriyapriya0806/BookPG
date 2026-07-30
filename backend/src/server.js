@@ -4,6 +4,7 @@ const app = require("./app");
 const connectDB = require("./config/db");
 const env = require("./config/env");
 const { attachSocket } = require("./services/socket.service");
+const { start: startExpirySweep } = require("./services/expiry.service");
 
 const start = async () => {
   await connectDB();
@@ -19,6 +20,8 @@ const start = async () => {
     socket.on("room:join", (roomId) => socket.join(`room:${roomId}`));
     socket.on("room:leave", (roomId) => socket.leave(`room:${roomId}`));
   });
+
+  startExpirySweep();
 
   server.listen(env.port, () => {
     console.log(`[api] Server running on http://localhost:${env.port}`);

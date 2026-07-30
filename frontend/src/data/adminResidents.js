@@ -107,7 +107,7 @@ export const defaultResidents = [
     roomNumber: "401",
     bedId: "guindy-401-bed-a",
     bedName: "Bed A",
-    sharingType: "1 Sharing",
+    sharingType: "2 Sharing",
     roomType: "AC",
     moveInDate: "2026-07-20",
     expectedVacateDate: "2027-07-19",

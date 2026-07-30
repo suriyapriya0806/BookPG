@@ -82,7 +82,7 @@ const amenities = [
 const bedSummary = [
   ["Total Beds", "4 Beds", BedDouble],
   ["Available Beds", "2 Available", Check],
-  ["Reserved Beds", "1 Reserved", Lock],
+  ["Blocked Beds", "1 Blocked", Lock],
   ["Booked Beds", "1 Booked", KeyRound]
 ];
 

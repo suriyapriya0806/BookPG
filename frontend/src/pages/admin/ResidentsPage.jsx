@@ -75,7 +75,7 @@ const syncBedsWithResidents = (beds, residents) =>
     if (!resident) return bed;
     return {
       ...bed,
-      status: resident.status === "Pending Check-In" ? "Reserved" : "Occupied",
+      status: resident.status === "Pending Check-In" ? "Blocked" : "Occupied",
       currentResident: resident.status === "Pending Check-In" ? "" : resident.fullName,
       bookingId: resident.bookingId,
       checkInDate: resident.moveInDate,

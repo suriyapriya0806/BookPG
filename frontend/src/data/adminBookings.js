@@ -1,6 +1,6 @@
 export const BOOKING_STORAGE_KEY = "pg_admin_bookings";
 
-export const BOOKING_STATUSES = ["Pending", "Approved", "Rejected", "Cancelled", "Checked In"];
+export const BOOKING_STATUSES = ["Blocked", "Confirmed", "Rejected", "Cancelled", "Checked In", "Expired"];
 export const BOOKING_ACTION_STATUSES = [...BOOKING_STATUSES, "Assigned to Warden"];
 export const PAYMENT_STATUSES = ["Pending", "Paid", "Refunded"];
 export const REJECTION_REASONS = ["Duplicate Booking", "Invalid Documents", "Payment Not Verified", "Other"];
@@ -46,13 +46,12 @@ export const defaultBookings = [
     bookingDate: "2026-07-18",
     moveInDate: "2026-08-01",
     expectedStay: "12 Months",
-    tokenAmount: 5000,
     transactionId: "TXNAN0001",
     paymentMethod: "UPI",
     paymentDate: "2026-07-18",
     paymentScreenshot: paymentImage,
     paymentStatus: "Paid",
-    bookingStatus: "Pending",
+    bookingStatus: "Blocked",
     assignedWardenId: "",
     assignedWardenName: "",
     rejectionReason: ""
@@ -81,13 +80,12 @@ export const defaultBookings = [
     bookingDate: "2026-07-15",
     moveInDate: "2026-07-25",
     expectedStay: "6 Months",
-    tokenAmount: 7000,
     transactionId: "TXNVL0002",
     paymentMethod: "Card",
     paymentDate: "2026-07-15",
     paymentScreenshot: paymentImage,
     paymentStatus: "Paid",
-    bookingStatus: "Approved",
+    bookingStatus: "Confirmed",
     assignedWardenId: "",
     assignedWardenName: "",
     rejectionReason: ""
@@ -116,7 +114,6 @@ export const defaultBookings = [
     bookingDate: "2026-07-14",
     moveInDate: "2026-08-05",
     expectedStay: "10 Months",
-    tokenAmount: 4500,
     transactionId: "TXNTB0003",
     paymentMethod: "UPI",
     paymentDate: "2026-07-14",
@@ -146,12 +143,11 @@ export const defaultBookings = [
     roomNumber: "401",
     bedId: "guindy-401-bed-a",
     bedName: "Bed A",
-    sharingType: "1 Sharing",
+    sharingType: "2 Sharing",
     roomType: "AC",
     bookingDate: "2026-07-10",
     moveInDate: "2026-07-20",
     expectedStay: "12 Months",
-    tokenAmount: 10000,
     transactionId: "TXNGD0004",
     paymentMethod: "Net Banking",
     paymentDate: "2026-07-10",
@@ -186,7 +182,6 @@ export const defaultBookings = [
     bookingDate: "2026-07-09",
     moveInDate: "2026-07-28",
     expectedStay: "6 Months",
-    tokenAmount: 3500,
     transactionId: "TXNPR0005",
     paymentMethod: "UPI",
     paymentDate: "2026-07-09",
@@ -221,7 +216,6 @@ export const defaultBookings = [
     bookingDate: "2026-07-04",
     moveInDate: "2026-07-22",
     expectedStay: "9 Months",
-    tokenAmount: 6500,
     transactionId: "TXNSH0006",
     paymentMethod: "Card",
     paymentDate: "2026-07-04",
@@ -241,4 +235,47 @@ export const loadBookings = () => {
 
 export const saveBookings = (bookings) => {
   localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookings));
+};
+
+export const createGuestBlockBooking = ({ guest, phone, branch, room, bed, moveInDate }) => {
+  const bookings = loadBookings();
+  const createdAt = new Date();
+  const id = `BK-ONL-${createdAt.getTime()}`;
+  const booking = {
+    id,
+    customerName: guest?.name || "Guest",
+    gender: "",
+    dob: "",
+    phone,
+    email: guest?.email || "",
+    emergencyContact: "",
+    occupation: "",
+    organization: "",
+    aadhaarNumber: "",
+    aadhaarFront: "",
+    aadhaarBack: "",
+    branchId: branch.id,
+    branchName: branch.name,
+    roomId: room.id,
+    roomNumber: room.number,
+    bedId: bed.id,
+    bedName: bed.label,
+    sharingType: room.sharingType,
+    roomType: room.roomType,
+    bookingDate: createdAt.toISOString().slice(0, 10),
+    moveInDate,
+    expectedStay: "",
+    transactionId: "",
+    paymentMethod: "",
+    paymentDate: "",
+    paymentScreenshot: "",
+    paymentStatus: "Pending",
+    bookingStatus: "Blocked",
+    assignedWardenId: "",
+    assignedWardenName: "",
+    rejectionReason: ""
+  };
+
+  saveBookings([booking, ...bookings]);
+  return booking;
 };

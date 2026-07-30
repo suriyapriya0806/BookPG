@@ -1,21 +1,28 @@
-import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Card from "../../components/ui/Card";
 import StatCard from "../../components/ui/StatCard";
+import { loadBranches } from "../../data/adminBranches";
 import { loadResidents } from "../../data/adminResidents";
 import { useLiveAvailability } from "../../lib/liveAvailability";
 import { calculatePaymentAnalytics, formatCurrency, useLivePayments } from "../../lib/livePayments";
-import api from "../../services/api";
+import { useLiveBlockNotifications } from "../../lib/liveBlocks";
 
 const AdminDashboard = () => {
-  const [summary, setSummary] = useState({});
+  const navigate = useNavigate();
   const { rooms } = useLiveAvailability();
   const { payments, notifications } = useLivePayments();
+  const blockNotifications = useLiveBlockNotifications();
   const residents = loadResidents();
   const paymentAnalytics = calculatePaymentAnalytics(payments, residents);
-
-  useEffect(() => {
-    api.get("/dashboard").then(({ data }) => setSummary(data.data)).catch(() => {});
-  }, []);
+  const totalBeds = rooms.reduce((sum, room) => sum + Number(room.totalBeds || 0), 0);
+  const bookedBeds = rooms.reduce((sum, room) => sum + Number(room.occupiedBeds || 0) + Number(room.blockedBeds || 0), 0);
+  const summary = {
+    branches: loadBranches().length,
+    totalBeds,
+    bookedBeds,
+    occupancyRate: totalBeds ? Math.round((bookedBeds / totalBeds) * 100) : 0,
+    revenue: paymentAnalytics.monthlyRevenue
+  };
 
   return (
     <div>
@@ -24,7 +31,7 @@ const AdminDashboard = () => {
         <StatCard label="Branches" value={summary.branches ?? 0} />
         <StatCard label="Total beds" value={summary.totalBeds ?? 0} />
         <StatCard label="Occupancy" value={`${summary.occupancyRate ?? 0}%`} helper={`${summary.bookedBeds ?? 0} booked beds`} />
-        <StatCard label="Revenue" value={`₹${summary.revenue ?? 0}`} />
+        <StatCard label="Revenue" value={formatCurrency(summary.revenue)} />
       </div>
 
       <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -57,7 +64,7 @@ const AdminDashboard = () => {
         <table className="w-full min-w-[960px] text-left text-sm">
           <thead className="border-b border-line bg-slate-50 text-slate-500">
             <tr>
-              {["Room Number", "Total Beds", "Available Beds", "Occupied Beds", "Reserved Beds", "Maintenance Beds", "Overall Availability"].map((heading) => (
+              {["Room Number", "Total Beds", "Available Beds", "Occupied Beds", "Blocked Beds", "Maintenance Beds", "Overall Availability"].map((heading) => (
                 <th key={heading} className="px-4 py-3 font-semibold">{heading}</th>
               ))}
             </tr>
@@ -69,7 +76,7 @@ const AdminDashboard = () => {
                 <td className="px-4 py-3 font-semibold">{room.totalBeds}</td>
                 <td className="px-4 py-3 font-semibold text-success">{room.availableBeds}</td>
                 <td className="px-4 py-3 font-semibold">{room.occupiedBeds}</td>
-                <td className="px-4 py-3 font-semibold">{room.reservedBeds}</td>
+                <td className="px-4 py-3 font-semibold">{room.blockedBeds}</td>
                 <td className="px-4 py-3 font-semibold">{room.maintenanceBeds}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-3 py-1 text-xs font-bold ${room.overallAvailability === "Available" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{room.overallAvailability}</span>
@@ -93,6 +100,36 @@ const AdminDashboard = () => {
             </div>
           ))}
           {!notifications.length && <p className="rounded-xl bg-paper p-4 text-sm font-semibold text-slate-500">No payment notifications yet.</p>}
+        </div>
+      </Card>
+
+      <Card className="mt-5">
+        <h2 className="text-lg font-bold text-ink">Recently Blocked Beds</h2>
+        <div className="mt-4 grid gap-3">
+          {blockNotifications.slice(0, 10).map((notification) => (
+            <div
+              key={notification.id}
+              role={notification.bookingId ? "button" : undefined}
+              tabIndex={notification.bookingId ? 0 : undefined}
+              onClick={() => notification.bookingId && navigate("/pgbooking/admin/bookings", { state: { openBookingId: notification.bookingId } })}
+              onKeyDown={(event) => {
+                if (notification.bookingId && (event.key === "Enter" || event.key === " ")) navigate("/pgbooking/admin/bookings", { state: { openBookingId: notification.bookingId } });
+              }}
+              className={`rounded-xl bg-paper p-3 text-sm ${notification.bookingId ? "cursor-pointer transition hover:bg-gold/10" : ""}`}
+            >
+              <p className="font-semibold text-ink">
+                {notification.guestName}
+                {notification.guestPhone ? (
+                  <> · <a href={`tel:${notification.guestPhone}`} className="text-gold hover:underline">{notification.guestPhone}</a></>
+                ) : null}
+              </p>
+              <p className="mt-1 text-slate-500">
+                {notification.branchName}{notification.roomLabel ? ` · ${notification.roomLabel}` : ""}{notification.bedLabel ? ` · ${notification.bedLabel}` : ""}
+              </p>
+              <p className="mt-0.5 text-xs text-slate-400">{notification.blockedAt}</p>
+            </div>
+          ))}
+          {!blockNotifications.length && <p className="rounded-xl bg-paper p-4 text-sm font-semibold text-slate-500">No recently blocked beds.</p>}
         </div>
       </Card>
     </div>

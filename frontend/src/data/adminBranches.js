@@ -101,7 +101,7 @@ export const defaultBranches = [
     beds: 200,
     occupiedBeds: 148,
     availableBeds: 42,
-    reservedBeds: 6,
+    blockedBeds: 6,
     maintenanceBeds: 4,
     monthlyRevenue: 1245000,
     todayCollection: 18000,

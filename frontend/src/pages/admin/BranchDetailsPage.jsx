@@ -17,7 +17,7 @@ const branchMetricOverrides = {
     beds: 200,
     availableBeds: 42,
     occupiedBeds: 148,
-    reservedBeds: 6,
+    blockedBeds: 6,
     maintenanceBeds: 4,
     residents: 148,
     todayCollection: 18000,
@@ -120,7 +120,7 @@ const BranchDetailsPage = () => {
         <StatCard label="Total Beds" value={metrics?.beds ?? (branchBeds.length || branch.beds)} />
         <StatCard label="Available Beds" value={metrics?.availableBeds ?? (branchBeds.filter((bed) => bed.status === "Available").length || branch.availableBeds)} />
         <StatCard label="Occupied Beds" value={metrics?.occupiedBeds ?? (branchBeds.filter((bed) => bed.status === "Occupied").length || branch.occupiedBeds)} />
-        <StatCard label="Reserved Beds" value={metrics?.reservedBeds ?? branchBeds.filter((bed) => bed.status === "Reserved").length} />
+        <StatCard label="Blocked Beds" value={metrics?.blockedBeds ?? branchBeds.filter((bed) => bed.status === "Blocked").length} />
         <StatCard label="Maintenance Beds" value={metrics?.maintenanceBeds ?? branchBeds.filter((bed) => bed.status === "Maintenance").length} />
         <StatCard label="Available Rooms" value={branchRooms.filter((room) => room.overallAvailability === "Available").length} />
         <StatCard label="Occupancy %" value={`${occupancy}%`} />

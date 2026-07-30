@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CheckCircle2, Mail, XCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import Card from "../components/ui/Card";
 import Input from "../components/ui/Input";
@@ -12,20 +12,28 @@ const Login = () => {
   const [error, setError] = useState("");
   const [popup, setPopup] = useState(null);
   const [redirectPath, setRedirectPath] = useState("");
+  const [redirectState, setRedirectState] = useState(null);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const submit = async (event) => {
     event.preventDefault();
     setError("");
     try {
       const user = await login(form.loginId, form.password);
-      const path = getDashboardPathForRole(user.role);
+      const requestedLocation = location.state?.from;
+      const shouldResumeGuestBooking = user.role === "USER" && requestedLocation?.pathname === "/booking";
+      const path = shouldResumeGuestBooking
+        ? `${requestedLocation.pathname}${requestedLocation.search || ""}${requestedLocation.hash || ""}`
+        : getDashboardPathForRole(user.role);
+      const nextState = shouldResumeGuestBooking ? requestedLocation.state : null;
       setRedirectPath(path);
+      setRedirectState(nextState);
       setPopup({ type: "success", title: "✔ Login Successful", message: "Welcome back!" });
       window.setTimeout(() => {
         setPopup(null);
-        navigate(path);
+        navigate(path, { state: nextState });
       }, 2000);
     } catch (err) {
       const message = err.response?.data?.message || err.message || "Invalid login ID/email or password.";
@@ -47,7 +55,7 @@ const Login = () => {
             <h2 className="mt-4 text-xl font-bold text-ink">{popup.title}</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-6 text-slate-600">{popup.message}</p>
             {popup.type === "success" ? (
-              <Button className="mt-5 w-full" onClick={() => navigate(redirectPath || "/")}>Continue</Button>
+              <Button className="mt-5 w-full" onClick={() => navigate(redirectPath || "/", { state: redirectState })}>Continue</Button>
             ) : (
               <Button variant="secondary" className="mt-5 w-full" onClick={() => setPopup(null)}>Try Again</Button>
             )}

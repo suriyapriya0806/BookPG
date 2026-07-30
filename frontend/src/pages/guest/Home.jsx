@@ -160,12 +160,12 @@ const Home = () => {
     </section>
 
     <section className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-      <SectionHeader align="left" eyebrow="WHY CHOOSE PGSTAY" title="Why Thousands Choose PGStay" description="Find verified PG accommodations across Chennai with transparent pricing, real-time bed availability, secure online booking, and premium amenities. Whether you're a student or a working professional, PGStay helps you discover the right place with confidence." />
+      <SectionHeader align="left" eyebrow="WHY CHOOSE PGSTAY" title="Why Thousands Choose PGStay" description="Find verified PG accommodations across Chennai with transparent pricing, real-time bed availability, and premium amenities. Block your preferred bed online, then complete payment and final confirmation in person." />
       <div className="grid gap-4 sm:grid-cols-2">
         {[
           ["Verified PG Branches", "Every PG is verified with complete property details, amenities, room information, and genuine photos before being listed."],
           ["Live Room & Bed Availability", "Check real-time room occupancy, available beds, sharing options, and AC or Non-AC availability before booking."],
-          ["Easy Online Booking", "Select your branch, choose a room, pick your preferred bed, complete your profile, and reserve instantly with a secure token payment."],
+          ["Simple Bed Blocking", "Select your branch, choose a room, pick your preferred bed, and submit a block request. Our staff will contact you to complete the process in person."],
           ["Safe & Secure Stay", "Enjoy verified accommodations with CCTV, biometric access, Wi-Fi, food services, housekeeping, laundry, and dedicated wardens."]
         ].map(([title, text]) => (
           <Card key={title}>

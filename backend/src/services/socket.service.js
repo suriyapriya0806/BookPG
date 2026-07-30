@@ -11,7 +11,8 @@ const emitBedAvailability = (bed) => {
     room: bed.room,
     branch: bed.branch,
     status: bed.status,
-    holdExpiresAt: bed.holdExpiresAt
+    holdExpiresAt: bed.holdExpiresAt,
+    blockedUntil: bed.blockedUntil
   };
   io.to(`room:${bed.room.toString()}`).emit("bed:updated", payload);
   io.emit("availability:updated", payload);

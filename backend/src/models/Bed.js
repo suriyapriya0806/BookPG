@@ -8,11 +8,12 @@ const bedSchema = new mongoose.Schema(
     position: { row: Number, col: Number },
     status: {
       type: String,
-      enum: ["AVAILABLE", "OCCUPIED", "RESERVED", "MAINTENANCE"],
+      enum: ["AVAILABLE", "OCCUPIED", "BLOCKED", "MAINTENANCE"],
       default: "AVAILABLE"
     },
     currentResident: { type: mongoose.Schema.Types.ObjectId, ref: "Resident" },
-    holdExpiresAt: { type: Date }
+    holdExpiresAt: { type: Date },
+    blockedUntil: { type: Date }
   },
   { timestamps: true }
 );

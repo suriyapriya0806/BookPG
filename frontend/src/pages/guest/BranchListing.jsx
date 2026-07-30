@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, MapPin, Star } from "lucide-react";
+import { ArrowRight, MapPin, Navigation, Star } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import { exploreBranches, formatCurrency } from "../../data/bookingFlow";
@@ -43,6 +43,35 @@ const BranchListing = () => (
                     <p className="mt-1 text-2xl font-semibold text-ink">{formatCurrency(branch.startingPrice)}</p>
                     <p className="text-sm text-muted">/ month</p>
                   </div>
+                </div>
+                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-muted">Google Map</p>
+                    <div className="mt-2 h-28 overflow-hidden rounded-[18px] border border-line bg-paper">
+                      <iframe
+                        src={`https://www.google.com/maps?q=${branch.latitude},${branch.longitude}&z=15&output=embed`}
+                        title={`${branch.name} Google Map`}
+                        className="h-full w-full"
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        allowFullScreen
+                      />
+                    </div>
+                    <div className="mt-3 flex items-start gap-2 text-sm text-secondary">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+                      <span>{branch.fullAddress.split("\n").map((line) => <span key={line} className="block">{line}</span>)}</span>
+                    </div>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${branch.latitude},${branch.longitude}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-gold transition hover:text-ink"
+                    >
+                      <Navigation className="h-4 w-4" /> Get Directions
+                    </a>
+                  </div>
+                  <div className="hidden sm:block" />
                 </div>
                 <div className="mt-6 border-t border-line pt-5">
                   <Button className="w-full">

@@ -51,7 +51,6 @@ const rooms = [
     sharing_type: 4,
     monthly_rent: 18500,
     deposit_amount: 37000,
-    token_amount: 2500,
     amenities: ["Ensuite Bathroom", "Study Table", "Wardrobe", "Wi-Fi"],
     images: ["https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=80"],
     is_active: true
@@ -65,7 +64,6 @@ const rooms = [
     sharing_type: 3,
     monthly_rent: 14800,
     deposit_amount: 29600,
-    token_amount: 2000,
     amenities: ["Balcony", "Study Table", "Wardrobe"],
     images: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80"],
     is_active: true
@@ -79,7 +77,6 @@ const rooms = [
     sharing_type: 2,
     monthly_rent: 16900,
     deposit_amount: 33800,
-    token_amount: 2500,
     amenities: ["AC", "Fitness Access", "Housekeeping"],
     images: ["https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"],
     is_active: true
@@ -222,7 +219,6 @@ const bookings = [
     status: "pending",
     monthly_rent: 18500,
     deposit_amount: 37000,
-    token_amount: 2500,
     document_filenames: ["aadhaar-isha.pdf"],
     created_at: "2026-07-16T09:30:00.000Z",
     updated_at: "2026-07-16T09:30:00.000Z"
@@ -237,7 +233,6 @@ const bookings = [
     status: "approved",
     monthly_rent: 18500,
     deposit_amount: 37000,
-    token_amount: 2500,
     document_filenames: ["aadhaar-rohan.pdf", "offer-letter-rohan.pdf"],
     created_at: "2026-07-14T11:00:00.000Z",
     updated_at: "2026-07-15T10:20:00.000Z"
@@ -252,7 +247,6 @@ const bookings = [
     status: "rejected",
     monthly_rent: 16900,
     deposit_amount: 33800,
-    token_amount: 2500,
     document_filenames: ["id-demo.pdf"],
     created_at: "2026-07-12T08:45:00.000Z",
     updated_at: "2026-07-13T16:10:00.000Z"
@@ -267,7 +261,6 @@ const bookings = [
     status: "checked_in",
     monthly_rent: 18500,
     deposit_amount: 37000,
-    token_amount: 2500,
     document_filenames: ["aadhaar-ananya.pdf"],
     created_at: "2026-07-08T10:15:00.000Z",
     updated_at: "2026-07-10T09:00:00.000Z"
@@ -396,7 +389,7 @@ export const createPaymentOrder = (holdId) => {
   const order = {
     order_id: newId("order"),
     hold_id: holdId,
-    amount: room.token_amount,
+    amount: 0,
     currency: "INR",
     status: "created"
   };
@@ -430,7 +423,6 @@ export const verifyPayment = (orderId) => {
     status: "pending",
     monthly_rent: room.monthly_rent,
     deposit_amount: room.deposit_amount,
-    token_amount: room.token_amount,
     document_filenames: hold.document_filenames,
     created_at: timestamp,
     updated_at: timestamp
@@ -441,7 +433,7 @@ export const verifyPayment = (orderId) => {
     booking_id: booking.booking_id,
     guest_id: booking.guest_id,
     branch_id: booking.branch_id,
-    amount: room.token_amount,
+    amount: 0,
     method: "mock",
     status: "paid",
     reference: order.order_id,

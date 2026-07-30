@@ -13,7 +13,7 @@ const fieldClass = "min-h-11 w-full rounded-xl border border-line bg-white px-3 
 const statusStyles = {
   Available: "bg-emerald-50 text-emerald-700",
   Occupied: "bg-red-50 text-red-700",
-  Reserved: "bg-orange-50 text-orange-700",
+  Blocked: "bg-orange-50 text-orange-700",
   Maintenance: "bg-slate-100 text-slate-600"
 };
 
@@ -53,7 +53,7 @@ const OccupancyPage = () => {
     totalBeds: branchBeds.length,
     availableBeds: branchBeds.filter((bed) => bed.status === "Available").length,
     occupiedBeds: branchBeds.filter((bed) => bed.status === "Occupied").length,
-    reservedBeds: branchBeds.filter((bed) => bed.status === "Reserved").length,
+    blockedBeds: branchBeds.filter((bed) => bed.status === "Blocked").length,
     maintenanceBeds: branchBeds.filter((bed) => bed.status === "Maintenance").length
   }), [branchBeds]);
 
@@ -98,7 +98,7 @@ const OccupancyPage = () => {
         <StatCard label="Total Beds" value={stats.totalBeds} />
         <StatCard label="Available Beds" value={stats.availableBeds} />
         <StatCard label="Occupied Beds" value={stats.occupiedBeds} />
-        <StatCard label="Reserved Beds" value={stats.reservedBeds} />
+        <StatCard label="Blocked Beds" value={stats.blockedBeds} />
         <StatCard label="Maintenance Beds" value={stats.maintenanceBeds} />
       </div>
 
@@ -145,7 +145,7 @@ const OccupancyPage = () => {
         <table className="w-full min-w-[960px] text-left text-sm">
           <thead className="border-b border-line bg-slate-50 text-slate-500">
             <tr>
-              {["Room Number", "Total Beds", "Available Beds", "Occupied Beds", "Reserved Beds", "Maintenance Beds", "Overall Availability", "Update Status", "Action"].map((heading) => (
+              {["Room Number", "Total Beds", "Available Beds", "Occupied Beds", "Blocked Beds", "Maintenance Beds", "Overall Availability", "Update Status", "Action"].map((heading) => (
                 <th key={heading} className="px-4 py-3 font-semibold">{heading}</th>
               ))}
             </tr>
@@ -159,7 +159,7 @@ const OccupancyPage = () => {
                   <td className="px-4 py-3 font-semibold">{room.totalBeds}</td>
                   <td className="px-4 py-3 font-semibold text-success">{room.availableBeds}</td>
                   <td className="px-4 py-3 font-semibold">{room.occupiedBeds}</td>
-                  <td className="px-4 py-3 font-semibold">{room.reservedBeds}</td>
+                  <td className="px-4 py-3 font-semibold">{room.blockedBeds}</td>
                   <td className="px-4 py-3 font-semibold">{room.maintenanceBeds}</td>
                   <td className="px-4 py-3">
                     <span className={`rounded-full px-3 py-1 text-xs font-bold ${room.overallAvailability === "Available" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-600"}`}>{room.overallAvailability}</span>

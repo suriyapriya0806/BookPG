@@ -43,7 +43,6 @@ const defaultSettings = {
     systemLogo: "",
     favicon: "",
     timezone: "Asia/Kolkata",
-    currency: "INR",
     language: "English"
   },
   company: {
@@ -62,6 +61,7 @@ const defaultSettings = {
     defaultCheckOutTime: "10:00",
     bookingTokenAmount: "5000",
     maximumAdvanceBookingDays: "45",
+    blockExpiryHours: "24",
     allowOnlineBooking: true,
     branchEnabled: true
   },
@@ -113,9 +113,9 @@ const defaultSettings = {
 };
 
 const requiredFields = {
-  general: ["systemName", "timezone", "currency", "language"],
+  general: ["systemName", "timezone", "language"],
   company: ["companyName", "ownerName", "email", "phone", "address"],
-  branches: ["defaultCheckInTime", "defaultCheckOutTime", "bookingTokenAmount", "maximumAdvanceBookingDays"],
+  branches: ["defaultCheckInTime", "defaultCheckOutTime", "bookingTokenAmount", "maximumAdvanceBookingDays", "blockExpiryHours"],
   booking: ["cancellationHours"],
   payments: ["paymentGateway", "upiId", "bankAccount", "gstPercentage", "lateFeeAmount", "lateFeeGraceDays"],
   notifications: [],
@@ -127,7 +127,6 @@ const requiredFields = {
 const labels = {
   systemName: "System Name",
   timezone: "Timezone",
-  currency: "Currency",
   language: "Language",
   companyName: "Company Name",
   ownerName: "Owner Name",
@@ -138,6 +137,7 @@ const labels = {
   defaultCheckOutTime: "Default Check-Out Time",
   bookingTokenAmount: "Booking Token Amount",
   maximumAdvanceBookingDays: "Maximum Advance Booking Days",
+  blockExpiryHours: "Block Expiry Hours",
   cancellationHours: "Cancellation Hours",
   paymentGateway: "Payment Gateway",
   upiId: "UPI ID",
@@ -267,7 +267,12 @@ const SettingsPage = () => {
           <div className="grid gap-4 lg:grid-cols-2">
             {input("general", "systemName", "System Name")}
             {select("general", "timezone", "Timezone", ["Asia/Kolkata", "UTC", "Asia/Dubai", "Asia/Singapore"])}
-            {select("general", "currency", "Currency", ["INR", "USD", "AED", "SGD"])}
+            <Field label="Currency">
+              <div className={`${fieldClass} flex items-center gap-2 text-slate-500`}>
+                <span className="text-lg font-semibold text-ink">₹</span>
+                INR (Indian Rupee)
+              </div>
+            </Field>
             {select("general", "language", "Language", ["English", "Tamil", "Hindi"])}
             <FileUpload label="System Logo" value={settings.general.systemLogo} onChange={(value) => update("general", "systemLogo", value)} />
             <FileUpload label="Favicon" value={settings.general.favicon} onChange={(value) => update("general", "favicon", value)} />
@@ -308,6 +313,7 @@ const SettingsPage = () => {
             {input("branches", "defaultCheckOutTime", "Default Check-Out Time", { type: "time" })}
             {input("branches", "bookingTokenAmount", "Booking Token Amount", { type: "number", min: "0" })}
             {input("branches", "maximumAdvanceBookingDays", "Maximum Advance Booking Days", { type: "number", min: "1" })}
+            {input("branches", "blockExpiryHours", "Block Expiry Hours", { type: "number", min: "1" })}
             <Toggle label="Allow Online Booking" checked={settings.branches.allowOnlineBooking} onChange={(value) => update("branches", "allowOnlineBooking", value)} />
             <Toggle label="Enable Branch" checked={settings.branches.branchEnabled} onChange={(value) => update("branches", "branchEnabled", value)} />
           </div>

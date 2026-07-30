@@ -10,7 +10,6 @@ import BedsPage from "./pages/admin/BedsPage";
 import BranchDetailsPage from "./pages/admin/BranchDetailsPage";
 import BranchesPage from "./pages/admin/BranchesPage";
 import BookingsPage from "./pages/admin/BookingsPage";
-import ManagementPage from "./pages/admin/ManagementPage";
 import PaymentsPage from "./pages/admin/PaymentsPage";
 import ReportsPage from "./pages/admin/ReportsPage";
 import ResidentsPage from "./pages/admin/ResidentsPage";
@@ -19,12 +18,11 @@ import SettingsPage from "./pages/admin/SettingsPage";
 import WardensPage from "./pages/admin/WardensPage";
 import BedSelection from "./pages/guest/BedSelection";
 import Booking from "./pages/guest/Booking";
-import BookingDetails from "./pages/guest/BookingDetails";
+import BlockRequestSuccess from "./pages/guest/BlockRequestSuccess";
 import BookingStatus from "./pages/guest/BookingStatus";
 import BranchListing from "./pages/guest/BranchListing";
 import FeaturedBranches from "./pages/guest/FeaturedBranches";
 import Home from "./pages/guest/Home";
-import Payment from "./pages/guest/Payment";
 import RoomDetails from "./pages/guest/RoomDetails";
 import UserDashboard from "./pages/user/UserDashboard";
 import OccupancyPage from "./pages/warden/OccupancyPage";
@@ -41,8 +39,7 @@ const App = () => (
       <Route path="featured-branches" element={<FeaturedBranches />} />
       <Route path="branches/:branchId/rooms" element={<RoomDetails />} />
       <Route path="rooms/:roomId/beds" element={<BedSelection />} />
-      <Route path="booking-details" element={<BookingDetails />} />
-      <Route path="payment" element={<Payment />} />
+      <Route path="block-request-submitted" element={<BlockRequestSuccess />} />
       <Route path="booking-status" element={<BookingStatus />} />
       <Route element={<ProtectedRoute roles={[ROLES.USER]} />}>
         <Route path="booking" element={<Booking />} />
@@ -53,8 +50,7 @@ const App = () => (
       <Route path="pgbooking/user" element={<DashboardLayout role={ROLES.USER} />}>
         <Route index element={<Navigate to={getDashboardPathForRole(ROLES.USER)} replace />} />
         <Route path="dashboard" element={<UserDashboard />} />
-        <Route path="booking" element={<BookingDetails />} />
-        <Route path="payment" element={<Payment />} />
+        <Route path="booking" element={<BookingStatus />} />
         <Route path="visits" element={<BookingStatus />} />
         <Route path="complaints" element={<ComplaintsPage role={ROLES.USER} />} />
       </Route>

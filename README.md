@@ -65,11 +65,11 @@ The backend emits `bed:updated` events through Socket.IO. The frontend joins `ro
 
 1. Guest logs in through Google or Facebook social endpoint.
 2. Guest selects a branch, room and exact bed.
-3. Backend holds the selected bed for 15 minutes.
-4. Guest pays token amount.
-5. Booking moves to `PENDING_APPROVAL`.
-6. Super Admin approves or rejects.
-7. Approval converts the booking into an active resident and marks the bed booked.
+3. Backend blocks the bed (no payment required) and sets a `blockedUntil` expiry.
+4. Booking status is `BLOCKED`. Bed status is `BLOCKED`.
+5. Super Admin manually confirms the booking in person (after collecting payment) or rejects it.
+6. Confirmation converts the booking into an active resident record.
+7. Warden checks in the resident; bed becomes `OCCUPIED`.
 
 ## Notes
 

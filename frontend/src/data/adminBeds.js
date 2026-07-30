@@ -1,6 +1,6 @@
 export const BED_STORAGE_KEY = "pg_admin_beds";
 
-export const BED_STATUSES = ["Available", "Occupied", "Reserved", "Maintenance"];
+export const BED_STATUSES = ["Available", "Occupied", "Blocked", "Maintenance"];
 export const BED_TYPES = ["Single Cot"];
 
 export const luxuryBedImage = "https://images.unsplash.com/photo-1615873968403-89e068629265?auto=format&fit=crop&w=900&q=82";
@@ -125,12 +125,12 @@ export const defaultBeds = [
     bedCode: "BEDV101B",
     bedType: "Single Cot",
     bedImage: luxuryBedImage,
-    status: "Reserved",
+    status: "Blocked",
     currentResident: "",
     bookingId: "BK-VR-101B",
     checkInDate: "2026-08-01",
     checkOutDate: "2027-07-31",
-    description: "Reserved for upcoming move-in."
+    description: "Blocked for upcoming move-in."
   },
   {
     id: "tamb-201-bed-a",
@@ -143,12 +143,12 @@ export const defaultBeds = [
     bedCode: "BED201A",
     bedType: "Single Cot",
     bedImage: luxuryBedImage,
-    status: "Reserved",
+    status: "Blocked",
     currentResident: "",
     bookingId: "BK-TB-201A",
     checkInDate: "2026-08-05",
     checkOutDate: "2027-08-04",
-    description: "Reserved cot in a premium student room."
+    description: "Blocked cot in a premium student room."
   },
   {
     id: "tamb-201-bed-b",
@@ -228,7 +228,7 @@ export const defaultBeds = [
     branchName: "Guindy",
     roomId: "guindy-401",
     roomNumber: "401",
-    sharingType: "1 Sharing",
+    sharingType: "2 Sharing",
     bedName: "Bed A",
     bedCode: "BED401A",
     bedType: "Single Cot",

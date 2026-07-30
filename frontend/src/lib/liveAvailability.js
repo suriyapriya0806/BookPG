@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { BED_STATUSES, loadBeds, saveBeds } from "../data/adminBeds";
 import { loadRooms, saveRooms } from "../data/adminRooms";
-import api from "../services/api";
-import { getSocket } from "../services/socket";
 
 export const AVAILABILITY_EVENT = "pg:availability-updated";
 export const AVAILABLE_STATUS = "Available";
@@ -11,16 +9,16 @@ export const NOT_AVAILABLE_STATUS = "Not Available";
 const apiStatusToUi = {
   AVAILABLE: "Available",
   OCCUPIED: "Occupied",
-  RESERVED: "Reserved",
+  RESERVED: "Blocked",
   MAINTENANCE: "Maintenance",
-  HELD: "Reserved",
-  BOOKED: "Reserved"
+  HELD: "Blocked",
+  BOOKED: "Blocked"
 };
 
 const uiStatusToApi = {
   Available: "AVAILABLE",
   Occupied: "OCCUPIED",
-  Reserved: "RESERVED",
+  Blocked: "BLOCKED",
   Maintenance: "MAINTENANCE"
 };
 
@@ -53,7 +51,7 @@ export const summarizeRoomAvailability = (room, beds) => {
   const totalBeds = roomBeds.length || Number(room.beds || 0);
   const availableBeds = roomBeds.filter((bed) => bed.status === "Available").length;
   const occupiedBeds = roomBeds.filter((bed) => bed.status === "Occupied").length;
-  const reservedBeds = roomBeds.filter((bed) => bed.status === "Reserved").length;
+  const blockedBeds = roomBeds.filter((bed) => bed.status === "Blocked").length;
   const maintenanceBeds = roomBeds.filter((bed) => bed.status === "Maintenance").length;
   const overallAvailability = availableBeds > 0 ? AVAILABLE_STATUS : NOT_AVAILABLE_STATUS;
 
@@ -63,7 +61,7 @@ export const summarizeRoomAvailability = (room, beds) => {
     totalBeds,
     availableBeds,
     occupiedBeds,
-    reservedBeds,
+    blockedBeds,
     maintenanceBeds,
     status: overallAvailability,
     overallAvailability
@@ -90,21 +88,11 @@ export const updateStoredBedStatus = (bedId, status) => {
   return saveAvailabilitySnapshot(nextBeds);
 };
 
-export const updateBedStatus = async (bed, status) => {
+export const updateBedStatus = (bed, status) => {
   const uiStatus = toUiStatus(status);
   if (!isAllowedAvailabilityStatus(uiStatus)) throw new Error("Invalid availability status.");
 
-  const snapshot = updateStoredBedStatus(bed.id, uiStatus);
-
-  if (/^[a-f\d]{24}$/i.test(String(bed.id))) {
-    try {
-      await api.patch(`/beds/${bed.id}`, { status: toApiStatus(uiStatus) });
-    } catch (error) {
-      if (!snapshot) throw error;
-    }
-  }
-
-  return snapshot;
+  return updateStoredBedStatus(bed.id, uiStatus);
 };
 
 export const useLiveAvailability = () => {
@@ -118,31 +106,15 @@ export const useLiveAvailability = () => {
       setRooms(summarizeRoomsAvailability(loadRooms(), nextBeds));
     };
 
-    const socket = getSocket();
-    const onAvailabilityUpdated = (payload) => {
-      const uiStatus = toUiStatus(payload?.status);
-      const bedId = payload?.id || payload?._id;
-      if (!bedId || !isAllowedAvailabilityStatus(uiStatus)) {
-        refresh();
-        return;
-      }
-      updateStoredBedStatus(String(bedId), uiStatus);
-      refresh();
-    };
-
     window.addEventListener(AVAILABILITY_EVENT, refresh);
     window.addEventListener("pg:beds-updated", refresh);
     window.addEventListener("storage", refresh);
-    socket.on("availability:updated", onAvailabilityUpdated);
-    socket.on("bed:updated", onAvailabilityUpdated);
     refresh();
 
     return () => {
       window.removeEventListener(AVAILABILITY_EVENT, refresh);
       window.removeEventListener("pg:beds-updated", refresh);
       window.removeEventListener("storage", refresh);
-      socket.off("availability:updated", onAvailabilityUpdated);
-      socket.off("bed:updated", onAvailabilityUpdated);
     };
   }, []);
 
