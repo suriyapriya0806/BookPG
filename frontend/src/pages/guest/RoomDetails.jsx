@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
-import { bookingBranches, bookingRooms, formatCurrency } from "../../data/bookingFlow";
+import { bookingRooms, formatCurrency, useBookingBranches } from "../../data/bookingFlow";
 import { adminBranchIdFromPublicBranchId, useLiveAvailability } from "../../lib/liveAvailability";
 
 const sharingTypes = ["2 Sharing", "3 Sharing", "4 Sharing"];
@@ -63,6 +63,7 @@ const RoomDetails = () => {
   const [sharingType, setSharingType] = useState("");
   const [roomType, setRoomType] = useState("");
   const [selectedGalleryIndex, setSelectedGalleryIndex] = useState(0);
+  const bookingBranches = useBookingBranches();
   const { rooms: liveRooms } = useLiveAvailability();
   const branch = bookingBranches.find((item) => item.id === branchId) || bookingBranches[0];
   const liveBranchRooms = liveRooms.filter((room) => room.branchId === adminBranchIdFromPublicBranchId(branch.id));

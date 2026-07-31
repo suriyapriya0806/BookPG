@@ -2,16 +2,17 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ArrowRight, BedDouble, Check, MapPin, Star } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
-import { featuredPgBranches, formatCurrency } from "../../data/bookingFlow";
+import { formatCurrency, useBookingBranches } from "../../data/bookingFlow";
 
 const getBranchLocation = (branch) => `${branch.addressLines[1].replace(",", "")}, Chennai`;
 
 const FeaturedBranches = () => {
   const [searchParams] = useSearchParams();
+  const branches = useBookingBranches();
   const location = searchParams.get("location")?.toLowerCase() || "";
   const visibleBranches = location
-    ? featuredPgBranches.filter((branch) => branch.name.toLowerCase().includes(location))
-    : featuredPgBranches;
+    ? branches.filter((branch) => branch.name.toLowerCase().includes(location))
+    : branches;
 
   return (
     <main className="bg-paper/70">

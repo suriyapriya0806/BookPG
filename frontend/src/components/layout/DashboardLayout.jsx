@@ -21,7 +21,8 @@ const wardenLinks = [
   ["Dashboard", "/pgbooking/warden/dashboard", Home],
   ["Residents", "/pgbooking/warden/residents", Users],
   ["Payments", "/pgbooking/warden/payments", CreditCard],
-  ["Occupancy", "/pgbooking/warden/occupancy", BarChart3]
+  ["Occupancy", "/pgbooking/warden/occupancy", BarChart3],
+  ["Complaints", "/pgbooking/warden/complaints", MessageSquareWarning]
 ];
 
 const userLinks = [

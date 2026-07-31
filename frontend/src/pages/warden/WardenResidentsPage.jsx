@@ -31,9 +31,8 @@ const statusStyles = {
 const bookingStatusStyles = {
   Blocked: "bg-amber-50 text-amber-700",
   Confirmed: "bg-emerald-50 text-emerald-700",
-  "Assigned to Warden": "bg-purple-50 text-purple-700",
-  "Checked-In": "bg-blue-50 text-blue-700",
   "Checked In": "bg-blue-50 text-blue-700",
+  "Checked Out": "bg-slate-100 text-slate-600",
   Completed: "bg-slate-100 text-slate-600",
   Rejected: "bg-red-50 text-red-700",
   Cancelled: "bg-slate-100 text-slate-600",
@@ -47,11 +46,9 @@ const formatDate = (value) => {
   return new Date(`${value}T00:00:00`).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 };
 
-const statusText = (status) => (status === "Checked In" ? "Checked-In" : status);
-
 const StatusBadge = ({ status, type = "resident" }) => {
   const styles = type === "booking" ? bookingStatusStyles : statusStyles;
-  return <span className={`rounded-full px-3 py-1 text-xs font-bold ${styles[status] || "bg-slate-100 text-slate-700"}`}>{statusText(status)}</span>;
+  return <span className={`rounded-full px-3 py-1 text-xs font-bold ${styles[status] || "bg-slate-100 text-slate-700"}`}>{status}</span>;
 };
 
 const Field = ({ label, children }) => (
@@ -181,7 +178,7 @@ const ResidentViewModal = ({ resident, booking, onClose }) => (
           <DetailGrid items={[
             ["Booking ID", resident.bookingId],
             ["Booking Date", formatDate(resident.bookingDate)],
-            ["Booking Status", booking ? statusText(booking.bookingStatus) : "-"]
+            ["Booking Status", booking?.bookingStatus || "-"]
           ]} />
         </Card>
       </div>
@@ -388,7 +385,7 @@ const WardenResidentsPage = () => {
         : item
     )));
     persistBookings(bookings.map((item) => (
-      item.id === resident.bookingId ? { ...item, bookingStatus: "Checked-In" } : item
+      item.id === resident.bookingId ? { ...item, bookingStatus: "Checked In" } : item
     )));
     setNotice(`${resident.fullName} checked in successfully.`);
   };
@@ -405,7 +402,7 @@ const WardenResidentsPage = () => {
         : item
     )));
     persistBookings(bookings.map((item) => (
-      item.id === resident.bookingId ? { ...item, bookingStatus: "Completed" } : item
+      item.id === resident.bookingId ? { ...item, bookingStatus: "Checked Out" } : item
     )));
     setCheckOutResident(null);
     setNotice(`${resident.fullName} checked out successfully.`);

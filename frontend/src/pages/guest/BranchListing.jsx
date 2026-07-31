@@ -2,9 +2,12 @@ import { Link } from "react-router-dom";
 import { ArrowRight, MapPin, Navigation, Star } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
-import { exploreBranches, formatCurrency } from "../../data/bookingFlow";
+import { formatCurrency, useBookingBranches } from "../../data/bookingFlow";
 
-const BranchListing = () => (
+const BranchListing = () => {
+  const branches = useBookingBranches();
+
+  return (
   <main className="bg-paper/70">
     <section className="border-b border-line bg-white">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
@@ -20,7 +23,7 @@ const BranchListing = () => (
 
     <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
       <div className="grid gap-6 md:grid-cols-2">
-        {exploreBranches.map((branch) => (
+        {branches.map((branch) => (
           <Link key={branch.id} to={`/branches/${branch.id}/rooms`} className="group block">
             <Card className="h-full overflow-hidden p-0">
               <div className="relative h-72 overflow-hidden">
@@ -85,6 +88,7 @@ const BranchListing = () => (
       </div>
     </section>
   </main>
-);
+  );
+};
 
 export default BranchListing;

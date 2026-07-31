@@ -20,9 +20,8 @@ const BlockRequestSuccess = () => {
           <p className="mt-6 text-xs font-bold uppercase tracking-[0.32em] text-gold">Block Request</p>
           <h1 className="mt-3 text-3xl font-semibold text-ink">Block Request Submitted</h1>
           <p className="mx-auto mt-5 max-w-lg text-left leading-7 text-secondary">
-            Your selected bed has been temporarily blocked.<br /><br />
-            Our staff will contact you shortly to verify your booking.<br /><br />
-            Payment and final confirmation will be completed during your visit.
+            Your bed has been blocked successfully.<br /><br />
+            After confirmation, your payment will be handled by the Admin for verification.
           </p>
           <Button className="mt-8 w-full sm:w-auto" onClick={() => navigate("/booking-status", { state: { booking } })}>
             View Booking Status

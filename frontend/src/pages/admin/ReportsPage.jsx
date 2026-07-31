@@ -273,7 +273,7 @@ const ReportsPage = () => {
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
             <StatCard label="Total Bookings" value={filteredBookings.length} />
             <StatCard label="Blocked" value={filteredBookings.filter((item) => item.bookingStatus === "Blocked").length} />
-            <StatCard label="Confirmed" value={filteredBookings.filter((item) => ["Confirmed", "Assigned to Warden"].includes(item.bookingStatus)).length} />
+            <StatCard label="Confirmed" value={filteredBookings.filter((item) => item.bookingStatus === "Confirmed").length} />
             <StatCard label="Rejected" value={filteredBookings.filter((item) => item.bookingStatus === "Rejected").length} />
             <StatCard label="Cancelled" value={filteredBookings.filter((item) => item.bookingStatus === "Cancelled").length} />
           </div>
@@ -346,7 +346,7 @@ const ReportsPage = () => {
             {["All", ...PAYMENT_TYPES].map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
           <select aria-label="Booking Status" className={fieldClass} value={filters.bookingStatus} onChange={(event) => { setFilters({ ...filters, bookingStatus: event.target.value }); setPage(1); }}>
-            {["All", "Blocked", "Confirmed", "Assigned to Warden", "Rejected", "Cancelled", "Checked In", "Expired", "Completed"].map((item) => <option key={item} value={item}>{item}</option>)}
+            {["All", "Blocked", "Confirmed", "Checked In", "Checked Out", "Completed", "Rejected", "Cancelled", "Expired"].map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
           <Button type="button" variant="secondary" onClick={resetFilters}>Reset Filters</Button>
         </div>

@@ -12,7 +12,7 @@ const statusContent = {
     icon: Clock,
     iconBg: "bg-blue-50 text-blue-700",
     title: "Bed Blocked Successfully",
-    subtitle: "Your bed is reserved. Our team will contact you to confirm your booking in person."
+    subtitle: "Your bed is blocked successfully. After confirmation, your payment will be handled by the Admin for verification."
   },
   CONFIRMED: {
     icon: CheckCircle2,
@@ -84,7 +84,7 @@ const BookingStatus = () => {
             <h1 className="mt-4 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{content.title}</h1>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-secondary">
               {status === "BLOCKED"
-                ? `Your bed is reserved. Our team will contact you at ${user?.phone || "the number on file"} to confirm your booking in person.`
+                ? `Your bed has been blocked successfully. Our team will contact you at ${user?.phone || "the number on file"} to confirm, and after confirmation your payment will be handled by the Admin for verification.`
                 : content.subtitle}
             </p>
           </div>

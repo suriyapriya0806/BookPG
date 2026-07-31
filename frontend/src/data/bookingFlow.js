@@ -1,3 +1,7 @@
+import { useEffect, useState } from "react";
+import { loadBranches } from "./adminBranches";
+import { publicBranchIdFromAdminBranchId } from "../lib/liveAvailability";
+
 export const exploreBranches = [
   {
     id: "anna-nagar-pg",
@@ -398,5 +402,52 @@ export const bookingRooms = [
   ...createBranchRooms("guindy-pg", "guindy", 14200),
   ...createBranchRooms("medavakkam-pg", "medavakkam", 12800)
 ];
+
+const toPublicBranch = (branch) => {
+  const publicId = publicBranchIdFromAdminBranchId(branch.id);
+  const branchRooms = bookingRooms.filter((room) => room.branchId === publicId);
+  const startingPrice = branchRooms.length ? Math.min(...branchRooms.map((room) => room.monthlyRent)) : 0;
+  const address = branch.address || [branch.area, branch.city].filter(Boolean).join(", ");
+
+  return {
+    id: publicId,
+    name: branch.name,
+    addressLines: address.split(",").map((line) => line.trim()).filter(Boolean),
+    fullAddress: address.replace(/,\s*/g, "\n"),
+    startingPrice,
+    rating: branch.rating || "4.8",
+    contactNumber: branch.contactNumber || "-",
+    latitude: Number(branch.latitude) || 0,
+    longitude: Number(branch.longitude) || 0,
+    image: branch.image || "",
+    gallery: (branch.gallery || []).map((item) => typeof item === "string" ? item : item.image).filter(Boolean),
+    facilities: branch.amenities || [],
+    occupancy: {
+      totalRooms: Number(branch.rooms || branchRooms.length || 0),
+      bookedRooms: Number(branch.occupiedBeds || 0),
+      availableRooms: Number(branch.availableBeds || 0)
+    }
+  };
+};
+
+export const loadBookingBranches = () => loadBranches()
+  .filter((branch) => branch.status !== "Inactive")
+  .map(toPublicBranch);
+
+export const useBookingBranches = () => {
+  const [branches, setBranches] = useState(loadBookingBranches);
+
+  useEffect(() => {
+    const refresh = () => setBranches(loadBookingBranches());
+    window.addEventListener("pg:branches-updated", refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener("pg:branches-updated", refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
+
+  return branches;
+};
 
 export const formatCurrency = (amount) => `₹${amount.toLocaleString("en-IN")}`;

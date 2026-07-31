@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { Check, Lock } from "lucide-react";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
-import { bookingBranches, bookingRooms, formatCurrency } from "../../data/bookingFlow";
+import { bookingRooms, formatCurrency, useBookingBranches } from "../../data/bookingFlow";
 import { useLiveAvailability } from "../../lib/liveAvailability";
 
 const PremiumBedIllustration = ({ muted = false }) => (
@@ -72,6 +72,7 @@ const PremiumBedIllustration = ({ muted = false }) => (
 const BedSelection = () => {
   const { roomId } = useParams();
   const [selectedBed, setSelectedBed] = useState(null);
+  const bookingBranches = useBookingBranches();
   const { beds: liveBeds, rooms: liveRooms } = useLiveAvailability();
   const baseRoom = bookingRooms.find((item) => item.id === roomId) || bookingRooms[0];
   const liveRoom = liveRooms.find((item) => item.id === baseRoom.id);
@@ -108,7 +109,7 @@ const BedSelection = () => {
             </div>
             <div className="flex flex-wrap gap-3 text-xs font-semibold text-secondary">
               <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-gold" /> Available</span>
-              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-line" /> Booked</span>
+              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 rounded-full bg-line" /> Unavailable</span>
             </div>
           </div>
 

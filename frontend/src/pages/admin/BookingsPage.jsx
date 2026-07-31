@@ -1,26 +1,27 @@
-import { Download, Eye, FileText, Plus, Printer, Search, ShieldCheck, UserCheck, X, XCircle } from "lucide-react";
+import { Download, Eye, FileText, Plus, Printer, Search, ShieldCheck, X, XCircle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
 import StatCard from "../../components/ui/StatCard";
 import { AREAS, loadBranches } from "../../data/adminBranches";
-import { BOOKING_ACTION_STATUSES, PAYMENT_STATUSES, REJECTION_REASONS, defaultWardens, loadBookings, saveBookings } from "../../data/adminBookings";
+import { BOOKING_ACTION_STATUSES, PAYMENT_STATUSES, REJECTION_REASONS, loadBookings, saveBookings } from "../../data/adminBookings";
 import { loadBeds, saveBeds } from "../../data/adminBeds";
 import { loadRooms } from "../../data/adminRooms";
 import { saveAvailabilitySnapshot } from "../../lib/liveAvailability";
 
 const rowsPerPage = 10;
 const fieldClass = "min-h-12 w-full rounded-xl border border-line bg-white px-4 text-sm text-ink outline-none transition focus:border-gold focus:ring-4 focus:ring-gold/15";
-const activeBookingStatuses = ["Confirmed", "Assigned to Warden", "Checked In"];
+const activeBookingStatuses = ["Blocked", "Confirmed", "Checked In"];
 
 const statusStyles = {
   Blocked: "bg-blue-50 text-blue-700",
   Confirmed: "bg-emerald-50 text-emerald-700",
-  "Assigned to Warden": "bg-gold/10 text-gold",
   Rejected: "bg-red-50 text-red-700",
   Cancelled: "bg-slate-100 text-slate-600",
   "Checked In": "bg-blue-50 text-blue-700",
+  "Checked Out": "bg-slate-100 text-slate-600",
+  Completed: "bg-slate-100 text-slate-600",
   Expired: "bg-slate-100 text-slate-600"
 };
 
@@ -86,7 +87,7 @@ const updateBedForBooking = (beds, booking, nextBookingStatus) =>
         checkOutDate: ""
       };
     }
-    if (["Confirmed", "Assigned to Warden"].includes(nextBookingStatus)) {
+    if (["Blocked", "Confirmed"].includes(nextBookingStatus)) {
       return {
         ...bed,
         status: "Blocked",
@@ -96,7 +97,7 @@ const updateBedForBooking = (beds, booking, nextBookingStatus) =>
         checkOutDate: ""
       };
     }
-    if (["Rejected", "Cancelled"].includes(nextBookingStatus)) {
+    if (["Rejected", "Cancelled", "Expired", "Checked Out", "Completed"].includes(nextBookingStatus)) {
       return {
         ...bed,
         status: "Available",
@@ -114,7 +115,7 @@ const syncBedsWithBookings = (beds, bookings) =>
     const activeBooking = bookings.find((booking) => booking.bedId === bed.id && activeBookingStatuses.includes(booking.bookingStatus));
     if (activeBooking) return updateBedForBooking([bed], activeBooking, activeBooking.bookingStatus)[0];
 
-    const releasedBooking = bookings.find((booking) => booking.bedId === bed.id && ["Rejected", "Cancelled"].includes(booking.bookingStatus));
+    const releasedBooking = bookings.find((booking) => booking.bedId === bed.id && ["Rejected", "Cancelled", "Expired", "Checked Out", "Completed"].includes(booking.bookingStatus));
     if (releasedBooking) return updateBedForBooking([bed], releasedBooking, releasedBooking.bookingStatus)[0];
 
     return bed;
@@ -181,31 +182,6 @@ const RejectDialog = ({ booking, onClose, onReject }) => {
         <div className="mt-5 flex justify-end gap-3">
           <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
           <Button type="button" variant="danger" onClick={() => onReject(booking, reason)}>Reject Booking</Button>
-        </div>
-      </Card>
-    </div>
-  );
-};
-
-const AssignWardenDialog = ({ booking, onClose, onAssign }) => {
-  const branchWardens = defaultWardens.filter((warden) => warden.branchId === booking.branchId);
-  const [wardenId, setWardenId] = useState(branchWardens[0]?.id || "");
-  const selectedWarden = branchWardens.find((warden) => warden.id === wardenId);
-
-  return (
-    <div className="fixed inset-0 z-[60] grid place-items-center bg-ink/40 px-4">
-      <Card className="w-full max-w-md">
-        <h2 className="text-xl font-bold text-ink">Assign Warden</h2>
-        <p className="mt-2 text-sm text-slate-600">Only wardens from {booking.branchName} are available.</p>
-        <label className="mt-4 block">
-          <span className="mb-2 block text-sm font-semibold text-ink">Select Warden</span>
-          <select className={fieldClass} value={wardenId} onChange={(event) => setWardenId(event.target.value)}>
-            {branchWardens.map((warden) => <option key={warden.id} value={warden.id}>{warden.name}</option>)}
-          </select>
-        </label>
-        <div className="mt-5 flex justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button type="button" disabled={!selectedWarden} onClick={() => onAssign(booking, selectedWarden)}>Assign Warden</Button>
         </div>
       </Card>
     </div>
@@ -445,7 +421,6 @@ const BookingsPage = () => {
   const [viewBooking, setViewBooking] = useState(null);
   const [confirmBooking, setConfirmBooking] = useState(null);
   const [rejectBooking, setRejectBooking] = useState(null);
-  const [assignBooking, setAssignBooking] = useState(null);
   const [walkInOpen, setWalkInOpen] = useState(false);
   const [workflowError, setWorkflowError] = useState("");
   const [page, setPage] = useState(1);
@@ -477,7 +452,7 @@ const BookingsPage = () => {
   const stats = useMemo(() => ({
     totalBookings: bookings.length,
     blocked: bookings.filter((booking) => booking.bookingStatus === "Blocked").length,
-    confirmed: bookings.filter((booking) => ["Confirmed", "Assigned to Warden"].includes(booking.bookingStatus)).length,
+    confirmed: bookings.filter((booking) => booking.bookingStatus === "Confirmed").length,
     rejected: bookings.filter((booking) => booking.bookingStatus === "Rejected").length,
     checkedIn: bookings.filter((booking) => booking.bookingStatus === "Checked In").length,
     cancelled: bookings.filter((booking) => booking.bookingStatus === "Cancelled").length,
@@ -535,11 +510,6 @@ const BookingsPage = () => {
   const confirmReject = (booking, reason) => {
     applyStatusChange(booking, "Rejected", { rejectionReason: reason, assignedWardenId: "", assignedWardenName: "" });
     setRejectBooking(null);
-  };
-
-  const confirmAssign = (booking, warden) => {
-    applyStatusChange(booking, "Assigned to Warden", { assignedWardenId: warden.id, assignedWardenName: warden.name });
-    setAssignBooking(null);
   };
 
   const handleWalkInSave = (data) => {
@@ -682,9 +652,6 @@ const BookingsPage = () => {
                     <button type="button" onClick={() => setRejectBooking(booking)} disabled={["Rejected", "Cancelled", "Checked In"].includes(booking.bookingStatus)} className="grid h-9 w-9 place-items-center rounded-xl border border-line text-danger hover:border-danger hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40" aria-label="Reject booking">
                       <XCircle className="h-4 w-4" />
                     </button>
-                    <button type="button" onClick={() => setAssignBooking(booking)} disabled={!["Confirmed", "Assigned to Warden"].includes(booking.bookingStatus)} className="grid h-9 w-9 place-items-center rounded-xl border border-line text-slate-600 hover:border-gold hover:text-gold disabled:cursor-not-allowed disabled:opacity-40" aria-label="Assign warden">
-                      <UserCheck className="h-4 w-4" />
-                    </button>
                     <button type="button" onClick={() => printReceipt(booking)} className="grid h-9 w-9 place-items-center rounded-xl border border-line text-slate-600 hover:border-gold hover:text-gold" aria-label="Print booking">
                       <Printer className="h-4 w-4" />
                     </button>
@@ -710,7 +677,7 @@ const BookingsPage = () => {
 
       <div className="mt-5 rounded-2xl border border-line bg-white p-5 shadow-soft">
         <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-500">
-          {[["Blocked", "Blocked"], ["Confirm", "Confirmed"], ["Assign to Warden", "Assigned to Warden"], ["Warden Receives Notification", "Assigned to Warden"], ["Resident Check-in", "Checked In"]].map(([label, status], index) => (
+          {[["Blocked", "Blocked"], ["Confirm", "Confirmed"], ["Resident Check-in", "Checked In"], ["Resident Check-out", "Checked Out"], ["Complete", "Completed"]].map(([label, status], index) => (
             <div key={`${label}-${index}`} className="flex items-center gap-3">
               <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusStyles[status]}`}>{label}</span>
               {index < 4 && <FileText className="h-4 w-4 text-gold" />}
@@ -722,7 +689,6 @@ const BookingsPage = () => {
       {viewBooking && <BookingViewModal booking={viewBooking} onClose={() => setViewBooking(null)} />}
       {confirmBooking && <ConfirmDialog booking={confirmBooking} onClose={() => setConfirmBooking(null)} onConfirm={handleConfirm} />}
       {rejectBooking && <RejectDialog booking={rejectBooking} onClose={() => setRejectBooking(null)} onReject={confirmReject} />}
-      {assignBooking && <AssignWardenDialog booking={assignBooking} onClose={() => setAssignBooking(null)} onAssign={confirmAssign} />}
       {walkInOpen && <WalkInDialog branches={branches} rooms={rooms} beds={beds} onClose={() => setWalkInOpen(false)} onSave={handleWalkInSave} />}
     </div>
   );

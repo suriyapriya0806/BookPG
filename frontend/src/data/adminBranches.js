@@ -364,6 +364,7 @@ export const loadBranches = () => {
 
 export const saveBranches = (branches) => {
   localStorage.setItem(BRANCH_STORAGE_KEY, JSON.stringify(branches));
+  window.dispatchEvent(new CustomEvent("pg:branches-updated", { detail: { branches } }));
 };
 
 export const loadAmenities = () => {

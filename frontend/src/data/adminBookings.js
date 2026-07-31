@@ -1,7 +1,7 @@
 export const BOOKING_STORAGE_KEY = "pg_admin_bookings";
 
-export const BOOKING_STATUSES = ["Blocked", "Confirmed", "Rejected", "Cancelled", "Checked In", "Expired"];
-export const BOOKING_ACTION_STATUSES = [...BOOKING_STATUSES, "Assigned to Warden"];
+export const BOOKING_STATUSES = ["Blocked", "Confirmed", "Checked In", "Checked Out", "Completed", "Rejected", "Cancelled", "Expired"];
+export const BOOKING_ACTION_STATUSES = BOOKING_STATUSES;
 export const PAYMENT_STATUSES = ["Pending", "Paid", "Refunded"];
 export const REJECTION_REASONS = ["Duplicate Booking", "Invalid Documents", "Payment Not Verified", "Other"];
 
@@ -119,7 +119,7 @@ export const defaultBookings = [
     paymentDate: "2026-07-14",
     paymentScreenshot: paymentImage,
     paymentStatus: "Paid",
-    bookingStatus: "Assigned to Warden",
+    bookingStatus: "Confirmed",
     assignedWardenId: "warden-tamb-1",
     assignedWardenName: "Ramesh Babu",
     rejectionReason: ""
@@ -228,23 +228,34 @@ export const defaultBookings = [
   }
 ];
 
+const normalizeBookingStatus = (status) => ({
+  "Checked-In": "Checked In",
+  "Assigned to Warden": "Confirmed",
+  Booked: "Blocked"
+}[status] || status);
+
 export const loadBookings = () => {
   const stored = localStorage.getItem(BOOKING_STORAGE_KEY);
-  return stored ? JSON.parse(stored) : defaultBookings;
+  const bookings = stored ? JSON.parse(stored) : defaultBookings;
+  const normalizedBookings = bookings.map((booking) => ({ ...booking, bookingStatus: normalizeBookingStatus(booking.bookingStatus) }));
+  if (stored && JSON.stringify(bookings) !== JSON.stringify(normalizedBookings)) {
+    localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(normalizedBookings));
+  }
+  return normalizedBookings;
 };
 
 export const saveBookings = (bookings) => {
   localStorage.setItem(BOOKING_STORAGE_KEY, JSON.stringify(bookings));
 };
 
-export const createGuestBlockBooking = ({ guest, phone, branch, room, bed, moveInDate }) => {
+export const createGuestBlockBooking = ({ guest, phone, gender, branch, room, bed, moveInDate }) => {
   const bookings = loadBookings();
   const createdAt = new Date();
   const id = `BK-ONL-${createdAt.getTime()}`;
   const booking = {
     id,
     customerName: guest?.name || "Guest",
-    gender: "",
+    gender,
     dob: "",
     phone,
     email: guest?.email || "",
@@ -259,7 +270,7 @@ export const createGuestBlockBooking = ({ guest, phone, branch, room, bed, moveI
     roomId: room.id,
     roomNumber: room.number,
     bedId: bed.id,
-    bedName: bed.label,
+    bedName: bed.label || bed.bedName,
     sharingType: room.sharingType,
     roomType: room.roomType,
     bookingDate: createdAt.toISOString().slice(0, 10),
