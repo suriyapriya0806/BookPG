@@ -11,12 +11,13 @@ const developmentAccounts = [
     }
   },
   {
-    loginId: "WD001",
-    password: "Temp@123",
+    loginId: "warden1@gmail.com",
+    password: "warden@1",
     token: "dev-token-warden-wd001",
     user: {
       id: "dev-warden-wd001",
       name: "Arun Kumar",
+      email: "warden1@gmail.com",
       employeeId: "WD001",
       role: "WARDEN",
       branchId: "anna-nagar",
